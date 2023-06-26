@@ -96,3 +96,39 @@ describe("Given I am connected as an employee", () => {
       fireEvent.submit(formNewBill);
       expect(handleSubmit).toHaveBeenCalled()
     })})})
+
+    // Intégration POST TESTS
+describe("When I am on NewBill Page and submit the form", () => {
+  beforeEach(() => {
+    jest.spyOn(mockStore, "bills")
+    Object.defineProperty(window, "localStorage", { value: localStorageMock })
+    window.localStorage.setItem(
+      "user",
+      JSON.stringify({
+        type: "Employee",
+        email: "a@a",
+      })
+    )
+    const root = document.createElement("div")
+    root.setAttribute("id", "root")
+    document.body.appendChild(root)
+    router()
+  })
+
+  describe("user submit form valid", () => {
+    test("call api update bills", async () => {
+      const newBill = new NewBill({
+        document,
+        onNavigate,
+        store: mockStore,
+        localeStorage: localStorageMock,
+      })
+      
+      const handleSubmit = jest.fn(newBill.handleSubmit)
+      const form = screen.getByTestId("form-new-bill")
+      form.addEventListener("submit", handleSubmit)
+      fireEvent.submit(form)
+      expect(mockStore.bills).toHaveBeenCalled()
+    })
+  })
+})
