@@ -145,12 +145,18 @@ export default class {
       this.counter ++
     }
 
-    bills.forEach(bill => {
-      $(`#open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills))
-    })
-
+     //Ajout de stopImmediatePropagation(), méthode empêche les autres auditeurs du même événement d'être appelé.
+   /*La fonction handleShowTickets est celle qui crée les EventListeners et provoque le lancement de handleEditTicket au clic.
+   Or cette fonction est lancée à chaque ouverture de famille de notes de frais. 
+   Ainsi plusieurs EventListeners sont implantés sur les mêmes éléments du DOM. 
+   C'est pourquoi quand on clique une seule fois dessus, la fonction handleEditTicket se lance plusieurs fois, ouvrant et refermant successivement les notes de frais.*/ 
+   bills.forEach((bill) => {
+    $(`#open-bill${bill.id}`).click((e) => {
+      e.stopImmediatePropagation()
+      this.handleEditTicket(e, bill, bills);
+    });
+  });
     return bills
-
   }
 
   getBillsAllUsers = () => {
